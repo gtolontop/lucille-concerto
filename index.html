@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CONCERTO 6 · distillation</title>
+<style>
+  :root{
+    --bg:#000;
+    --line:#181818;
+    --line-2:#262626;
+    --txt:#9a9a9a;
+    --dim:#666;
+    --dimmer:#454545;
+    --hi:#f2f2f2;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--txt);
+    font:12px/1.35 ui-monospace,"JetBrains Mono","IBM Plex Mono","SF Mono",Menlo,Consolas,monospace;
+    -webkit-font-smoothing:antialiased; letter-spacing:.02em;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+
+  .bar{flex:0 0 auto; border-bottom:1px solid var(--line); position:relative}
+  .row{display:flex; align-items:center; gap:16px; padding:0 12px; height:32px; white-space:nowrap}
+  .row+.row{border-top:1px solid var(--line)}
+
+  .brand{color:var(--hi); letter-spacing:.24em; font-size:11px}
+  .hw{color:var(--dimmer); font-size:10px; letter-spacing:.1em;
+      overflow:hidden; text-overflow:ellipsis; flex:1 1 auto; min-width:0}
+
+  .stats{display:flex; gap:15px; font-size:11px}
+  .stats span{color:var(--dimmer)}
+  .stats b{color:var(--txt); font-weight:400; font-variant-numeric:tabular-nums; margin-left:5px}
+  .stats b.acc{color:var(--hi)}
+
+  .rate{display:flex; align-items:baseline; gap:8px}
+  .rate b{font-size:22px; font-weight:500; color:var(--hi); font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .rate i{font-style:normal; font-size:9px; letter-spacing:.2em; color:var(--dim)}
+  .u2{font-size:9px; letter-spacing:.12em; color:var(--dimmer); font-variant-numeric:tabular-nums}
+  .state{border:1px solid var(--line-2); color:var(--dim); padding:3px 9px; font-size:9px;
+         letter-spacing:.2em; border-radius:1px}
+  .state.on{color:#000; background:var(--hi); border-color:var(--hi)}
+
+  .grp{display:flex; align-items:center; gap:7px}
+  .grp>label{font-size:9px; letter-spacing:.14em; color:var(--dimmer)}
+  .seg{display:flex; border:1px solid var(--line); border-radius:1px; overflow:hidden}
+  .seg button{background:transparent; border:0; border-right:1px solid var(--line); color:var(--dim);
+              font:inherit; font-size:11px; padding:3px 8px; cursor:pointer}
+  .seg button:last-child{border-right:0}
+  .seg button:hover{color:var(--hi)}
+  .seg button.on{color:#000; background:var(--hi)}
+
+  .page{font-size:11px; color:var(--dim); font-variant-numeric:tabular-nums}
+  .hint{color:var(--dimmer); font-size:9px; letter-spacing:.06em; margin-left:auto}
+  .hint kbd{border:1px solid var(--line); padding:0 3px; color:var(--dim)}
+
+  .gauge{position:absolute; left:0; right:0; bottom:-1px; height:1px}
+  .gauge i{display:block; height:100%; width:0; background:var(--hi); transition:width .3s linear}
+
+  #wall{flex:1 1 auto; position:relative; min-height:0}
+  canvas{display:block; width:100%; height:100%}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="row">
+    <span class="brand" id="brand">CONCERTO 6</span>
+    <span class="hw" id="hwLine">1.6T-A55B · NVFP4 · 4× MTP · RUBIN NVL72</span>
+    <span class="stats">
+      <span>sessions<b id="sSessions">0</b></span>
+      <span>samples/s<b id="sSamples">0</b></span>
+      <span>avg<b id="sAvg">0</b></span>
+      <span>dataset<b class="acc" id="sCorpus">— / 100B</b></span>
+      <span>eta<b id="sEta">—</b></span>
+    </span>
+    <span class="rate"><b id="tokrate">0</b><i>tok/s</i><span class="u2" id="maxLine">max 0</span></span>
+    <span class="state on" id="state">running</span>
+  </div>
+  <div class="row" id="settings">
+    <div class="grp"><label>racks</label><div class="seg" id="racks"></div></div>
+    <div class="grp"><label>teacher</label><div class="seg" id="teachers"></div></div>
+    <div class="grp"><label>tok/s per session</label><div class="seg" id="perStream"></div></div>
+    <div class="grp"><label>on screen</label><div class="seg" id="shown"></div></div>
+    <div class="grp"><label>size</label><div class="seg" id="density"></div></div>
+    <span class="page" id="pageInfo">page 1/1</span>
+    <span class="page" id="simInfo">sim 1 024</span>
+    <span class="hint"><kbd>[</kbd><kbd>]</kbd> page <kbd>space</kbd> pause <kbd>h</kbd> hide <kbd>r</kbd> restart</span>
+  </div>
+  <div class="gauge"><i id="gaugeFill"></i></div>
+</div>
+
+<div id="wall"><canvas id="cv"></canvas></div>
+<script src="corpus.js"></script>
+<script src="lexer.js"></script>
+<script src="hardware.js"></script>
+<script src="floor.js"></script>
+</body>
+</html>
