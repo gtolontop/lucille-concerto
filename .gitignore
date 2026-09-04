@@ -1,0 +1,9 @@
+# editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# local captures and scratch
+docs/*.local.*
+*.log
